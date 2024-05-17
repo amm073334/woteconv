@@ -180,13 +180,15 @@ fn textconv(file_path: &String) -> String {
 
     let num_cmns = parse_int(&mut byte_iter);
     
-    let mut s = String::new();
+    let mut output = String::new();
     for _ in 0..num_cmns {
-        s += &parse_cev(&mut byte_iter).to_string();
-        s += "\n\n";
+        let cev_str = parse_cev(&mut byte_iter).to_string();
+        if cev_str == "\n\n    (0,)()\n" { continue; }
+        output += &cev_str;
+        output += "\n\n";
     }
 
-    s
+    output
 }
 
 fn main() {
