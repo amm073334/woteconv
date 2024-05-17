@@ -116,6 +116,42 @@ fn parse_cev(byte_iter: &mut std::slice::Iter<u8>) -> CommonEvent {
 
     let memo = parse_str(byte_iter);
 
+    // unused stuff
+    byte_iter.next();
+    for _ in 0..parse_int(byte_iter) {
+        parse_str(byte_iter);
+    }
+    for _ in 0..parse_int(byte_iter) {
+        byte_iter.next();
+    }
+    for _ in 0..parse_int(byte_iter) {
+        for _ in 0..parse_int(byte_iter) {
+            parse_str(byte_iter);
+        }
+    }
+    for _ in 0..parse_int(byte_iter) {
+        for _ in 0..parse_int(byte_iter) {
+            parse_int(byte_iter);
+        }
+    }
+
+    for _ in 0..parse_int(byte_iter) {
+        parse_int(byte_iter);
+    }
+
+    byte_iter.next();
+    parse_int(byte_iter);
+    for _ in 0..100 {
+        parse_str(byte_iter);
+    }
+    byte_iter.next();
+    parse_str(byte_iter); // mystery string
+    byte_iter.next();
+
+    parse_str(byte_iter);
+    parse_int(byte_iter);
+    byte_iter.next();
+
     CommonEvent {
         name,
         memo,
@@ -128,11 +164,20 @@ fn textconv(file_path: &String) -> String {
         .expect("failed to read file");
 
     let mut byte_iter = contents.iter();
-    for _ in 0..8 {
+    // ignore magic number
+    for _ in 0..4 {
         byte_iter.next();
     }
+
+    let num_cmns = parse_int(&mut byte_iter);
     
-    parse_cev(&mut byte_iter).to_string()
+    let mut s = String::new();
+    for _ in 0..num_cmns {
+        s += &parse_cev(&mut byte_iter).to_string();
+        s += "\n\n";
+    }
+
+    s
 }
 
 fn main() {
