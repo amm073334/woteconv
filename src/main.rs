@@ -164,9 +164,18 @@ fn textconv(file_path: &String) -> String {
         .expect("failed to read file");
 
     let mut byte_iter = contents.iter();
-    // ignore magic number
-    for _ in 0..4 {
-        byte_iter.next();
+
+    // ignore header info
+    if file_path.contains("CommonEvent.dat") {
+        for _ in 0..11 {
+            byte_iter.next();
+        }
+    } else if file_path.contains(".common") {
+        for _ in 0..4 {
+            byte_iter.next();
+        }
+    } else {
+        panic!("could not detect file type (expected file path to contain either \"CommonEvent.dat\" or \".common\"");
     }
 
     let num_cmns = parse_int(&mut byte_iter);
